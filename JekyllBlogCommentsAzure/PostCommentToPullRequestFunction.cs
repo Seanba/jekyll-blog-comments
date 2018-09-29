@@ -106,7 +106,14 @@ namespace JekyllBlogCommentsAzure
                     p => ConvertParameter(form[p.Name], p.ParameterType) ?? (p.HasDefaultValue ? p.DefaultValue : new MissingRequiredValue())
                 );
 
-            errors = values.Where(p => p.Value is MissingRequiredValue).Select(p => $"Form value missing for {p.Key}").ToList();
+            errors = values.Where(p => p.Value is MissingRequiredValue).Select(p => $"Form value missing for {p.Key}\n").ToList();
+
+            if (errors.Any())
+            {
+                errors.Add("form keys:\n");
+                errors.AddRange(form.AllKeys.Select(k => $"form key = {k}\n"));
+            }
+
             if (values["email"] is string s && !validEmail.IsMatch(s))
                 errors.Add("email not in correct format");
 
